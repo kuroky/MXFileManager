@@ -73,7 +73,6 @@
     if (!self.storageData) {
         self.storageData = [NSMutableArray array];
     }
-    NSLog(@"path : %@", self.storagePath);
 }
 
 - (void)mx_fileSetup {
