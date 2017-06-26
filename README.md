@@ -32,9 +32,9 @@ pod 'MXFileManager', '~> 0.0.2'
 @param completion 是:创建成功
 */
 - (void)mx_createDirectiory:(NSString *)dirName
-isTemporary:(BOOL)tmp
-shouldStorage:(BOOL)storage
-completion:(MXFileHandlerBlock)completion;
+                isTemporary:(BOOL)tmp
+              shouldStorage:(BOOL)storage
+                 completion:(MXFileHandlerBlock)completion;
 
 /**
 创建文件
@@ -45,9 +45,9 @@ completion:(MXFileHandlerBlock)completion;
 @param completion 是:创建成功
 */
 - (void)mx_createFile:(NSString *)fileName
-isTemporary:(BOOL)tmp
-shouldStorage:(BOOL)storage
-completion:(MXFileHandlerBlock)completion;
+          isTemporary:(BOOL)tmp
+        shouldStorage:(BOOL)storage
+           completion:(MXFileHandlerBlock)completion;
 
 /**
 获取缓存大小
