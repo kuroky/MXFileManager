@@ -1,21 +1,25 @@
 ## MXFileManager
 ### 快速集成
-####1.通过CocoaPod安装
+#### 1.通过CocoaPod安装
+
 ```
 pod 'MXFileManager', '~> 0.0.2'
 
 ```
-####2.手动安装
+
+#### 2.手动安装
 将‘MXFileManager’添加至项目
-###使用说明
-####1.在AppDelegate引用头文件
+
+### 使用说明
+#### 1.在AppDelegate引用头文件
 
 ```
 #import "MXFileManager.h"
 [[MXFileManager sharedManager] mx_fileSetup];
 
 ```
-####2.API
+
+#### 2.API
 
 ```
 /**
