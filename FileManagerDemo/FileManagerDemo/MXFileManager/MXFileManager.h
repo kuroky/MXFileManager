@@ -51,7 +51,7 @@ typedef void(^MXFileClearBlock)(void);
  @param dirName 文件夹名称
  @param tmp 是:生成在cache目录下，否:生成在tmp下
  @param storage 是:需要持久化
- @param completion 是:创建成功
+ @param completion file:文件路径
  */
 - (void)mx_createDirectiory:(NSString *)dirName
                 isTemporary:(BOOL)tmp
@@ -64,7 +64,7 @@ typedef void(^MXFileClearBlock)(void);
  @param fileName 文件名
  @param tmp 是:生成在cache目录下，否:生成在tmp下
  @param storage 是:需要持久化
- @param completion 是:创建成功
+ @param completion file:文件路径
  */
 - (void)mx_createFile:(NSString *)fileName
           isTemporary:(BOOL)tmp
@@ -88,7 +88,14 @@ typedef void(^MXFileClearBlock)(void);
  */
 - (void)mx_clearCacheCompletion:(MXFileClearBlock)completion;
 
-- (void)mx_enumeratorFromTmp:(BOOL)tmp completion:(void (^)(NSArray *files))completion;
+/**
+ 枚举文件目录
+
+ @param tmp 是否临时文件
+ @param completion 列表
+ */
+- (void)mx_enumeratorFromTmp:(BOOL)tmp
+                  completion:(void (^)(NSArray *files))completion;
 
 /**
  缓存存放位置
