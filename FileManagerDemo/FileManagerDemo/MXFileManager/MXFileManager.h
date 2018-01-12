@@ -8,7 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^MXFileHandlerBlock)(BOOL success);
+/**
+ 创建文件/文件夹
+
+ @param filePath 路径
+ */
+typedef void(^MXFileCreateBlock)(NSString *filePath);
+
+/**
+ 删除文件/文件夹
+ */
+typedef void(^MXFileClearBlock)(void);
 
 /**
  1.Documents：只有用户生成的文件、应用程序不能重新创建的文件，应该保存在<Application_Home>/Documents 目录下面，并将通过iCloud自动备份。
@@ -46,7 +56,7 @@ typedef void(^MXFileHandlerBlock)(BOOL success);
 - (void)mx_createDirectiory:(NSString *)dirName
                 isTemporary:(BOOL)tmp
               shouldStorage:(BOOL)storage
-                 completion:(MXFileHandlerBlock)completion;
+                 completion:(MXFileCreateBlock)completion;
 
 /**
  创建文件
@@ -59,7 +69,7 @@ typedef void(^MXFileHandlerBlock)(BOOL success);
 - (void)mx_createFile:(NSString *)fileName
           isTemporary:(BOOL)tmp
         shouldStorage:(BOOL)storage
-           completion:(MXFileHandlerBlock)completion;
+           completion:(MXFileCreateBlock)completion;
 
 /**
  获取缓存大小
@@ -71,12 +81,12 @@ typedef void(^MXFileHandlerBlock)(BOOL success);
 /**
  清除临时数据
  */
-- (void)mx_clearTmpCompletion:(MXFileHandlerBlock)completion;
+- (void)mx_clearTmpCompletion:(MXFileClearBlock)completion;
 
 /**
  清除用户缓存数据
  */
-- (void)mx_clearCacheCompletion:(MXFileHandlerBlock)completion;
+- (void)mx_clearCacheCompletion:(MXFileClearBlock)completion;
 
 - (void)mx_enumeratorFromTmp:(BOOL)tmp completion:(void (^)(NSArray *files))completion;
 

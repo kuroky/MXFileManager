@@ -29,7 +29,7 @@
 
 /**
  持久化文件存储
- [@"filename1", @"filename2", @"filename3"...];
+ @[@"filename1", @"filename2", @"filename3"...];
  */
 @property (nonatomic, strong) NSMutableArray *storageData;
 
@@ -48,77 +48,71 @@
     return fileManager;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
 - (void)setup {
     NSString *appName = [[[NSBundle mainBundle] infoDictionary] valueForKey:(__bridge NSString *)kCFBundleNameKey];
     NSString *libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).lastObject;
     self.storagePath = [libraryPath stringByAppendingPathComponent:appName];
-    if (![_fileManager fileExistsAtPath:self.storagePath]) {
-        [self createDataPath];
-    }
-    
+
     NSString *appBundleId = [[[NSBundle mainBundle]infoDictionary] valueForKey:(__bridge NSString *)kCFBundleIdentifierKey];
     NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).lastObject;
     self.userCachePath = [cachePath stringByAppendingPathComponent:appBundleId];
-    if (![_fileManager fileExistsAtPath:self.userCachePath]) {
-        [self createCacheDirectory];
-    }
     
-    NSString *tmp = NSTemporaryDirectory();
-    self.userTmpPath = [tmp stringByAppendingString:appBundleId];
-    if (![_fileManager fileExistsAtPath:self.userTmpPath]) {
-        [self createTemporary];
-    }
+    self.userTmpPath = [NSTemporaryDirectory() stringByAppendingString:appBundleId];
     
-    self.storageData = [NSMutableArray arrayWithContentsOfFile:self.storagePath];
-    if (!self.storageData) {
-        self.storageData = [NSMutableArray array];
-    }
-    NSLog(@"path : %@", self.storagePath);
+    self.storageData = [NSMutableArray array];
+    [self.storageData addObjectsFromArray:[NSArray arrayWithContentsOfFile:self.storagePath]];
+    
+    _ioQueue = dispatch_queue_create("com.emucoo.fileManager", DISPATCH_QUEUE_SERIAL);
+    _fileManager = [NSFileManager defaultManager];
 }
 
 - (void)mx_fileSetup {
-    _ioQueue = dispatch_queue_create("com.emucoo.fileManager", DISPATCH_QUEUE_SERIAL);
-    _fileManager = [NSFileManager defaultManager];
-    [self setup];
+    if (![_fileManager fileExistsAtPath:self.storagePath]) {
+        [self createFileAtPath:self.storagePath];
+    }
+    
+    if (![_fileManager fileExistsAtPath:self.userCachePath]) {
+        [self createDirectoryAtPath:self.userCachePath];
+    }
+    
+    if (![_fileManager fileExistsAtPath:self.userTmpPath]) {
+        [self createDirectoryAtPath:self.userTmpPath];
+    }
 }
 
 #pragma mark - 创建文件夹
 - (void)mx_createDirectiory:(NSString *)dirName
                 isTemporary:(BOOL)tmp
               shouldStorage:(BOOL)storage
-                 completion:(MXFileHandlerBlock)completion {
-    if (!dirName || dirName.length == 0) {
-        if (completion) {
-            completion(NO);
-        }
+                 completion:(MXFileCreateBlock)completion {
+    if (!dirName || !dirName.length) {
+        completion ? completion(nil) : nil;
         return;
     }
     
-    __block BOOL state = NO;
-    NSString *filePath;
-    if (tmp) { // 临时文件路径
-        filePath = [self.userTmpPath stringByAppendingPathComponent:dirName];
-    }
-    else { // 缓存路径
-        filePath = [self.userCachePath stringByAppendingPathComponent:dirName];
-    }
+    __block BOOL state = YES;
+    // 临时文件路径 | 缓存路径
+    NSString *prePath = tmp ? self.userTmpPath : self.userCachePath;
+    NSString *filePath = [prePath stringByAppendingPathComponent:dirName];
     
     dispatch_sync(self.ioQueue, ^{
         if (![_fileManager fileExistsAtPath:filePath]) {
-            state = [[NSFileManager defaultManager] createDirectoryAtPath:filePath
-                                              withIntermediateDirectories:YES
-                                                               attributes:nil
-                                                                    error:nil];
-        }
-        else {
-            state = YES;
+            state = [self createDirectoryAtPath:filePath];
         }
         if (state && !storage) { // 创建成功&&不需要持久化, 保存至记录文件
-            [self addRecord:dirName isTemporary:tmp];
+            [self addRecord:dirName temporary:tmp];
         }
     });
-    if (completion) {
-        completion(state);
+    if (completion && state) {
+        completion(filePath);
     }
 }
 
@@ -126,41 +120,31 @@
 - (void)mx_createFile:(NSString *)fileName
           isTemporary:(BOOL)tmp
         shouldStorage:(BOOL)storage
-           completion:(MXFileHandlerBlock)completion {
-    if (!fileName || fileName.length == 0) {
-        if (completion) {
-            completion(NO);
-        }
+           completion:(MXFileCreateBlock)completion {
+    if (!fileName || !fileName.length) {
+        completion ? completion(nil) : nil;
         return;
     }
-    __block BOOL state = NO;
-    NSString *filePath;
-    if (tmp) { // 临时文件路径
-        filePath = [self.userTmpPath stringByAppendingPathComponent:fileName];
-    }
-    else { // 缓存路径
-        filePath = [self.userCachePath stringByAppendingPathComponent:fileName];
-    }
+    __block BOOL state = YES;
+    NSString *prePath = tmp ? self.userTmpPath : self.userCachePath;
+    NSString *filePath = [prePath stringByAppendingPathComponent:fileName];
+    
     dispatch_sync(self.ioQueue, ^{
         if (![_fileManager fileExistsAtPath:filePath]) {
-            state = [[NSFileManager defaultManager] createFileAtPath:filePath
-                                                            contents:nil
-                                                          attributes:nil];
+            state = [self createFileAtPath:filePath];
         }
-        else {
-            state = YES;
-        }
+    
         if (state && !storage) { // 创建成功&&需要持久化, 保存至记录文件
-            [self addRecord:fileName isTemporary:tmp];
+            [self addRecord:fileName temporary:tmp];
         }
     });
-    if (completion) {
-        completion(state);
+    if (completion && filePath) {
+        completion(filePath);
     }
 }
 
 #pragma mark - 清除临时数据
-- (void)mx_clearTmpCompletion:(MXFileHandlerBlock)completion {
+- (void)mx_clearTmpCompletion:(MXFileClearBlock)completion {
     dispatch_async(self.ioQueue, ^{
         NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtPath:self.userTmpPath];
         for (NSString *fileName in fileEnumerator) {
@@ -171,15 +155,13 @@
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) {
-                completion(YES);
-            }
+            completion ? completion() : nil;
         });
     });
 }
 
 #pragma mark - 清除缓存数据
-- (void)mx_clearCacheCompletion:(MXFileHandlerBlock)completion {
+- (void)mx_clearCacheCompletion:(MXFileClearBlock)completion {
     dispatch_async(self.ioQueue, ^{
         NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtPath:self.userCachePath];
         for (NSString *fileName in fileEnumerator) {
@@ -190,9 +172,7 @@
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) {
-                completion(YES);
-            }
+            completion ? completion() : nil;
         });
     });
 }
@@ -237,31 +217,21 @@
 }
 
 #pragma mark - Private
-#pragma mark - 记录文件
-- (void)createDataPath {
-    [_fileManager createFileAtPath:self.storagePath
-                          contents:nil
-                        attributes:nil];
+- (BOOL)createDirectoryAtPath:(NSString *)path {
+    return [_fileManager createDirectoryAtPath:path
+                   withIntermediateDirectories:YES
+                                    attributes:nil
+                                         error:nil];
 }
 
-#pragma mark - 缓存文件
-- (void)createCacheDirectory {
-    [_fileManager createDirectoryAtPath:self.userCachePath
-            withIntermediateDirectories:YES
-                             attributes:nil
-                                  error:nil];
-}
-
-#pragma mark - 临时文件
-- (void)createTemporary {
-    [_fileManager createDirectoryAtPath:self.userTmpPath
-            withIntermediateDirectories:YES
-                             attributes:nil
-                                  error:nil];
+- (BOOL)createFileAtPath:(NSString *)path {
+    return [_fileManager createFileAtPath:path
+                                 contents:nil
+                               attributes:nil];
 }
 
 - (void)addRecord:(NSString *)fileName
-      isTemporary:(BOOL)tmp {
+        temporary:(BOOL)tmp {
     if (![self.storageData containsObject:fileName]) {
         [self.storageData addObject:fileName];
     }

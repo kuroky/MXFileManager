@@ -54,8 +54,8 @@
         [[MXFileManager sharedManager] mx_createDirectiory:name
                                                isTemporary:NO
                                              shouldStorage:storage
-                                                completion:^(BOOL success) {
-                                                    NSLog(@"创建文件夹: %d", success);
+                                                completion:^(NSString *filePath) {
+                                                    NSLog(@"创建文件夹: %@", filePath);
                                                 }];
         storage = !storage;
     }
@@ -65,8 +65,8 @@
         [[MXFileManager sharedManager] mx_createDirectiory:name
                                                isTemporary:YES
                                              shouldStorage:storage
-                                                completion:^(BOOL success) {
-                                                    NSLog(@"创建临时文件夹: %d", success);
+                                                completion:^(NSString *filePath) {
+                                                    NSLog(@"创建临时文件夹: %@", filePath);
                                                 }];
         storage = !storage;
     }
@@ -76,8 +76,8 @@
         [[MXFileManager sharedManager] mx_createFile:name
                                          isTemporary:NO
                                        shouldStorage:storage
-                                          completion:^(BOOL success) {
-                                              NSLog(@"创建文件: %d", success);
+                                          completion:^(NSString *filePath) {
+                                              NSLog(@"创建文件: %@", filePath);
                                           }];
         storage = !storage;
     }
@@ -87,19 +87,19 @@
         [[MXFileManager sharedManager] mx_createFile:name
                                          isTemporary:YES
                                        shouldStorage:storage
-                                          completion:^(BOOL success) {
-                                              NSLog(@"创建临时文件: %d", success);
+                                          completion:^(NSString *filePath) {
+                                              NSLog(@"创建临时文件: %@", filePath);
                                           }];
         storage = !storage;
     }
     else if ([title isEqualToString:@"自动清除缓存"]) {
-        [[MXFileManager sharedManager] mx_clearTmpCompletion:^(BOOL success) {
-            NSLog(@"自动清除缓存: %d", success);
+        [[MXFileManager sharedManager] mx_clearTmpCompletion:^() {
+            NSLog(@"自动清除缓存");
         }];
     }
     else if ([title isEqualToString:@"手动清除缓存"]) {
-        [[MXFileManager sharedManager] mx_clearCacheCompletion:^(BOOL success) {
-            NSLog(@"手动清除缓存: %d", success);
+        [[MXFileManager sharedManager] mx_clearCacheCompletion:^() {
+            NSLog(@"手动清除缓存");
         }];
     }
     else if ([title isEqualToString:@"遍历文件tmp"]) {
