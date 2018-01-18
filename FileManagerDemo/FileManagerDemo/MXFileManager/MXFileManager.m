@@ -70,7 +70,7 @@
     self.storageData = [NSMutableArray array];
     [self.storageData addObjectsFromArray:[NSArray arrayWithContentsOfFile:self.storagePath]];
     
-    _ioQueue = dispatch_queue_create("com.emucoo.fileManager", DISPATCH_QUEUE_SERIAL);
+    _ioQueue = dispatch_queue_create("com.kuroky.fileManager", DISPATCH_QUEUE_SERIAL);
     _fileManager = [NSFileManager defaultManager];
 }
 
