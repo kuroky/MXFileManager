@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "MXFileManager"
-  s.version      = "1.0.0"
+  s.version      = "1.1.0"
   s.summary      = "iOS 沙盒文件创建与管理"
 
   s.description  = <<-DESC
