@@ -13,7 +13,7 @@
 		5B94DA211EFD20B900C0E313 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B94DA201EFD20B900C0E313 /* Assets.xcassets */; };
 		5B94DA241EFD20B900C0E313 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B94DA221EFD20B900C0E313 /* LaunchScreen.storyboard */; };
 		5B94DA2C1EFD20CF00C0E313 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B94DA2B1EFD20CF00C0E313 /* ViewController.xib */; };
-		5B94DA301EFD231A00C0E313 /* MXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B94DA2F1EFD231A00C0E313 /* MXFileManager.m */; };
+		5BBB7D7A2011E31D003FB9D5 /* MXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB7D792011E31D003FB9D5 /* MXFileManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,8 +27,8 @@
 		5B94DA231EFD20B900C0E313 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5B94DA251EFD20B900C0E313 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B94DA2B1EFD20CF00C0E313 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
-		5B94DA2E1EFD231A00C0E313 /* MXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MXFileManager.h; sourceTree = "<group>"; };
-		5B94DA2F1EFD231A00C0E313 /* MXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MXFileManager.m; sourceTree = "<group>"; };
+		5BBB7D782011E31D003FB9D5 /* MXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MXFileManager.h; sourceTree = "<group>"; };
+		5BBB7D792011E31D003FB9D5 /* MXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MXFileManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +61,7 @@
 		5B94DA131EFD20B900C0E313 /* FileManagerDemo */ = {
 			isa = PBXGroup;
 			children = (
-				5B94DA2D1EFD231A00C0E313 /* MXFileManager */,
+				5BBB7D772011E31D003FB9D5 /* MXFileManager */,
 				5B94DA171EFD20B900C0E313 /* AppDelegate.h */,
 				5B94DA181EFD20B900C0E313 /* AppDelegate.m */,
 				5B94DA1A1EFD20B900C0E313 /* ViewController.h */,
@@ -83,13 +83,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		5B94DA2D1EFD231A00C0E313 /* MXFileManager */ = {
+		5BBB7D772011E31D003FB9D5 /* MXFileManager */ = {
 			isa = PBXGroup;
 			children = (
-				5B94DA2E1EFD231A00C0E313 /* MXFileManager.h */,
-				5B94DA2F1EFD231A00C0E313 /* MXFileManager.m */,
+				5BBB7D782011E31D003FB9D5 /* MXFileManager.h */,
+				5BBB7D792011E31D003FB9D5 /* MXFileManager.m */,
 			);
-			path = MXFileManager;
+			name = MXFileManager;
+			path = ../../MXFileManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,7 +166,7 @@
 			files = (
 				5B94DA1C1EFD20B900C0E313 /* ViewController.m in Sources */,
 				5B94DA191EFD20B900C0E313 /* AppDelegate.m in Sources */,
-				5B94DA301EFD231A00C0E313 /* MXFileManager.m in Sources */,
+				5BBB7D7A2011E31D003FB9D5 /* MXFileManager.m in Sources */,
 				5B94DA161EFD20B900C0E313 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,6 +318,7 @@
 				5B94DA2A1EFD20B900C0E313 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
