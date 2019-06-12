@@ -8,9 +8,7 @@
 
 #import "MXFileManager.h"
 
-@interface MXFileManager () {
-    NSFileManager *_fileManager;
-}
+@interface MXFileManager ()
 
 /**
  cache文件夹
@@ -32,6 +30,8 @@
  @[@"filename1", @"filename2", @"filename3"...];
  */
 @property (nonatomic, strong) NSMutableArray *storageData;
+
+@property (nonatomic, strong) NSFileManager *fileManager;
 
 @property (strong, nonatomic, nullable) dispatch_queue_t ioQueue;
 
@@ -104,7 +104,7 @@
     NSString *filePath = [prePath stringByAppendingPathComponent:dirName];
     
     dispatch_sync(self.ioQueue, ^{
-        if (![_fileManager fileExistsAtPath:filePath]) {
+        if (![self.fileManager fileExistsAtPath:filePath]) {
             state = [self createDirectoryAtPath:filePath];
         }
         if (state && !storage) { // 创建成功&&不需要持久化, 保存至记录文件
@@ -130,7 +130,7 @@
     NSString *filePath = [prePath stringByAppendingPathComponent:fileName];
     
     dispatch_sync(self.ioQueue, ^{
-        if (![_fileManager fileExistsAtPath:filePath]) {
+        if (![self.fileManager fileExistsAtPath:filePath]) {
             state = [self createFileAtPath:filePath];
         }
     
@@ -146,11 +146,11 @@
 #pragma mark - 清除临时数据
 - (void)mx_clearTmpCompletion:(MXFileClearBlock)completion {
     dispatch_async(self.ioQueue, ^{
-        NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtPath:self.userTmpPath];
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.userTmpPath];
         for (NSString *fileName in fileEnumerator) {
             if ([self.storageData containsObject:fileName]) {
                 NSString *filePath = [self.userTmpPath stringByAppendingPathComponent:fileName];
-                [_fileManager removeItemAtPath:filePath error:nil];
+                [self.fileManager removeItemAtPath:filePath error:nil];
                 [self.storageData removeObject:fileName];
             }
         }
@@ -163,11 +163,11 @@
 #pragma mark - 清除缓存数据
 - (void)mx_clearCacheCompletion:(MXFileClearBlock)completion {
     dispatch_async(self.ioQueue, ^{
-        NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtPath:self.userCachePath];
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.userCachePath];
         for (NSString *fileName in fileEnumerator) {
             if ([self.storageData containsObject:fileName]) {
                 NSString *filePath = [self.userCachePath stringByAppendingPathComponent:fileName];
-                [_fileManager removeItemAtPath:filePath error:nil];
+                [self.fileManager removeItemAtPath:filePath error:nil];
                 [self.storageData removeObject:fileName];
             }
         }
@@ -181,14 +181,14 @@
 - (NSUInteger)mx_getSize {
     __block NSUInteger size = 0;
     dispatch_sync(self.ioQueue, ^{
-        NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtPath:self.userCachePath];
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.userCachePath];
         for (NSString *fileName in fileEnumerator) {
             NSString *filePath = [self.userCachePath stringByAppendingPathComponent:fileName];
             NSDictionary<NSString *, id> *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
             size += [attrs fileSize];
         }
         
-        fileEnumerator = [_fileManager enumeratorAtPath:self.userTmpPath];
+        fileEnumerator = [self.fileManager enumeratorAtPath:self.userTmpPath];
         for (NSString *fileName in fileEnumerator) {
             NSString *filePath = [self.userTmpPath stringByAppendingPathComponent:fileName];
             NSDictionary<NSString *, id> *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
@@ -203,7 +203,7 @@
     __block NSMutableArray *arrFiles = [NSMutableArray array];
     NSString *targetPath = tmp ? self.userTmpPath : self.userCachePath;
     dispatch_async(self.ioQueue, ^{
-        NSDirectoryEnumerator *fileEnumerator = [_fileManager enumeratorAtPath:targetPath];
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:targetPath];
         for (NSString *fileName in fileEnumerator) {
             NSString *filePath = [targetPath stringByAppendingPathComponent:fileName];
             [arrFiles addObject:filePath];
