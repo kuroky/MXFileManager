@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "MXFileManager.h"
+#import <MXFileManager/MXFileManager.h>
 
 @interface ViewController () <UITableViewDataSource, UITableViewDelegate>
 
