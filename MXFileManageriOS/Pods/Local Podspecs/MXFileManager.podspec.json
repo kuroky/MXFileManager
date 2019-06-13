@@ -16,6 +16,6 @@
     "tag": "#{s.version}"
   },
   "swift_version": "5.0",
-  "source_files": "MXFileManager/*.swift",
+  "source_files": "MXFileManager/**/*.swift",
   "requires_arc": true
 }
