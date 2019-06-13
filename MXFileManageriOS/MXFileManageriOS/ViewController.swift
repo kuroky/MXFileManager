@@ -13,7 +13,7 @@ import MXFileManager
 class ViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
-    let dataList = ["文件夹", "文件", "临时文件夹", "", "清除"]
+    let dataList = ["文件夹", "文件", "临时文件夹", "大小", "清除"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,8 +55,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                 }
             }
         }
-        else if text == "" {
-            
+        else if text == "大小" {
+            MXFileManager.fileManager.getSize { size in
+                print(size)
+            }
         }
     }
 }

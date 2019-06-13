@@ -11,6 +11,7 @@ extension String {
     
     //MARK:- 路径转换
     func appendingDirectoryPath(path: String) -> String {
+        return self + "/" + path
         if let url = URL(string: self) {
             let dirPath = url.appendingPathComponent(path, isDirectory: true)
             return dirPath.absoluteString

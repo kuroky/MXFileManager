@@ -15,7 +15,7 @@ import Foundation
 public class MXFileManager: NSObject {
     
     /// document文件夹路径
-    var document: String = ""
+    var documentPath: String = ""
     /// cache文件夹路径
     var userCachePath: String = ""
     /// 临时文件夹路径
@@ -41,7 +41,7 @@ public class MXFileManager: NSObject {
     func setup() {
         let appName = Bundle.main.object(forInfoDictionaryKey: kCFBundleNameKey as String) as! String
         let document = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
-        self.document = document.appendingDirectoryPath(path: appName)
+        self.documentPath = document.appendingDirectoryPath(path: appName)
         
         let libraryPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).last! as String
         self.storagePath = libraryPath.appendingDirectoryPath(path: appName)
@@ -59,20 +59,24 @@ public class MXFileManager: NSObject {
     
     /// 初始化
     @objc public func fileSetup() {
-        if self.fileManager.fileExists(atPath: self.document) {
-            _ = self.createDirectoryAtPath(path: self.document)
+        if !self.fileManager.fileExists(atPath: self.documentPath) {
+            let b = self.createDirectoryAtPath(path: self.documentPath)
+            print(b)
         }
         
-        if self.fileManager.fileExists(atPath: self.storagePath) {
-            _ = self.createFileAtPath(path: self.storagePath)
+        if !self.fileManager.fileExists(atPath: self.storagePath) {
+            let b = self.createFileAtPath(path: self.storagePath)
+            print(b)
         }
         
-        if self.fileManager.fileExists(atPath: self.userCachePath) {
-            _ = self.createDirectoryAtPath(path: self.userCachePath)
+        if !self.fileManager.fileExists(atPath: self.userCachePath) {
+            let b = self.createDirectoryAtPath(path: self.userCachePath)
+            print(b)
         }
         
-        if self.fileManager.fileExists(atPath: self.userTmpPath) {
-            _ = self.createDirectoryAtPath(path: self.userTmpPath)
+        if !self.fileManager.fileExists(atPath: self.userTmpPath) {
+            let b = self.createDirectoryAtPath(path: self.userTmpPath)
+            print(b)
         }
     }
     
@@ -140,26 +144,38 @@ public class MXFileManager: NSObject {
         }
     }
     
-    /// 清除临时数据
-    @objc public func clearTmpData(closure: (()-> Void)?) {
-        guard let fileEnumerator = self.fileManager.enumerator(atPath: self.userCachePath) else {
-            closure?()
-            return
-        }
-        
+    /// 清除tmp路径数据
+    @objc public func clearTmpData(closure: (() -> Void)?) {
         self.ioQueue.async {
-            for fileName in fileEnumerator {
-                if let name = fileName as? String, self.storageData.contains(name) {
-                    let filePath = self.userCachePath.appendingDirectoryPath(path: name)
-                    if let url = URL(string: filePath) {
-                        try? self.fileManager.removeItem(at: url)
-                        self.storageData.removeObject(object: name)
-                    }
-                }
-            }
+            self.clearData(path: self.userTmpPath)
             
             DispatchQueue.main.async {
                 closure?()
+            }
+        }
+    }
+    
+    /// 清除缓存路径数据
+    @objc public func clearCacheData(closure: (() -> Void)?) {
+        self.ioQueue.async {
+            self.clearData(path: self.userTmpPath)
+            self.clearData(path: self.userCachePath)
+            
+            DispatchQueue.main.async {
+                closure?()
+            }
+        }
+    }
+    
+    /// 获取文件所占大小
+    @objc public func getSize(closure: ((Double) -> Void)?) {
+        self.ioQueue.async {
+            let size1 = self.calculateSize(path: self.documentPath)
+            let size2 = self.calculateSize(path: self.documentPath)
+            let size3 = self.calculateSize(path: self.documentPath)
+
+            DispatchQueue.main.async {
+                closure?((size1 + size2 + size3) / 1024.0 / 1024.0)
             }
         }
     }
@@ -190,11 +206,44 @@ extension MXFileManager {
         }
         
         let data = NSKeyedArchiver.archivedData(withRootObject: self.storageData)
-        do {
-            let url = URL.init(fileURLWithPath: self.storagePath)
-            try data.write(to: url, options: [])
-        } catch {
-            
+        if let url = URL(string: self.storagePath) {
+            try? data.write(to: url, options: [])
+        }
+    }
+    
+    //MARK:- 计算文件大小
+    func calculateSize(path: String) -> Double {
+        
+        var size: Double = 0
+        guard let enumrator = self.fileManager.enumerator(atPath: path) else {
+            return size
+        }
+        
+        for fileName in enumrator {
+            if let name = fileName as? String {
+                let filePath = path.appendingDirectoryPath(path: name)
+                if let attr = try? self.fileManager.attributesOfItem(atPath: filePath) {
+                    size += attr[.size] as! Double
+                }
+            }
+        }
+        
+        return size
+    }
+    
+    func clearData(path: String) {
+        guard let enumrator = self.fileManager.enumerator(atPath: path) else {
+            return
+        }
+        
+        for fileName in enumrator {
+            if let name = fileName as? String, self.storageData.contains(name) {
+                let filePath = path.appendingDirectoryPath(path: name)
+                if let url = URL(string: filePath) {
+                    try? self.fileManager.removeItem(at: url)
+                    self.storageData.removeObject(object: name)
+                }
+            }
         }
     }
 }
