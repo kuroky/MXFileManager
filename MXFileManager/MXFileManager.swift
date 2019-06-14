@@ -14,8 +14,6 @@ import Foundation
 
 public class MXFileManager: NSObject {
     
-    /// document文件夹路径
-    var documentPath: String = ""
     /// cache文件夹路径
     var userCachePath: String = ""
     /// 临时文件夹路径
@@ -40,8 +38,6 @@ public class MXFileManager: NSObject {
     
     func setup() {
         let appName = Bundle.main.object(forInfoDictionaryKey: kCFBundleNameKey as String) as! String
-        let document = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
-        self.documentPath = document.appendingDirectoryPath(path: appName)
         
         let libraryPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).last! as String
         self.storagePath = libraryPath.appendingDirectoryPath(path: appName)
@@ -52,31 +48,25 @@ public class MXFileManager: NSObject {
         
         self.userTmpPath = (NSTemporaryDirectory() as String).appendingDirectoryPath(path: appBundleId)
         
-        if let items = NSArray(contentsOfFile: self.storagePath) {
+        
+        if let items = NSKeyedUnarchiver.unarchiveObject(withFile: self.storagePath) {
             self.storageData = items as! [String]
         }
     }
     
     /// 初始化
     @objc public func fileSetup() {
-        if !self.fileManager.fileExists(atPath: self.documentPath) {
-            let b = self.createDirectoryAtPath(path: self.documentPath)
-            print(b)
-        }
         
         if !self.fileManager.fileExists(atPath: self.storagePath) {
-            let b = self.createFileAtPath(path: self.storagePath)
-            print(b)
+            _ = self.createFileAtPath(path: self.storagePath)
         }
         
         if !self.fileManager.fileExists(atPath: self.userCachePath) {
-            let b = self.createDirectoryAtPath(path: self.userCachePath)
-            print(b)
+            _ = self.createDirectoryAtPath(path: self.userCachePath)
         }
         
         if !self.fileManager.fileExists(atPath: self.userTmpPath) {
-            let b = self.createDirectoryAtPath(path: self.userTmpPath)
-            print(b)
+            _ = self.createDirectoryAtPath(path: self.userTmpPath)
         }
     }
     
@@ -86,10 +76,10 @@ public class MXFileManager: NSObject {
     ///   - dirName: 名称
     ///   - isTmp: 是否在缓存路径 默认false
     ///   - shouldStorage: 是否需要持久化 默认true
-    ///   - closure: callback
-    @objc public func createDirectiory(dirName: String, isTmp: Bool = false, shouldStorage: Bool = true, closure: ((String?) -> Void)?) {
+    ///   - completion: callback
+    @objc public func createDirectiory(dirName: String, isTmp: Bool = false, shouldStorage: Bool = true, completion: ((String?) -> Void)?) {
         if dirName.isEmpty {
-            closure?(nil)
+            completion?(nil)
             return
         }
         
@@ -108,7 +98,7 @@ public class MXFileManager: NSObject {
         }
         
         if state {
-            closure?(filePath)
+            completion?(filePath)
         }
     }
     
@@ -145,24 +135,30 @@ public class MXFileManager: NSObject {
     }
     
     /// 清除tmp路径数据
-    @objc public func clearTmpData(closure: (() -> Void)?) {
+    
+    ///
+    /// - Parameter completion: callback
+    @objc public func clearTmpData(completion: (() -> Void)?) {
         self.ioQueue.async {
             self.clearData(path: self.userTmpPath)
             
             DispatchQueue.main.async {
-                closure?()
+                completion?()
             }
         }
     }
     
     /// 清除缓存路径数据
-    @objc public func clearCacheData(closure: (() -> Void)?) {
+    
+    ///
+    /// - Parameter completion: callback
+    @objc public func clearCacheData(completion: (() -> Void)?) {
         self.ioQueue.async {
             self.clearData(path: self.userTmpPath)
             self.clearData(path: self.userCachePath)
             
             DispatchQueue.main.async {
-                closure?()
+                completion?()
             }
         }
     }
@@ -170,15 +166,42 @@ public class MXFileManager: NSObject {
     /// 获取文件所占大小
     
     ///
-    /// - Parameter closure: callback 格式 x.xxx 单位 MB
-    @objc public func getSize(closure: ((Double) -> Void)?) {
+    /// - Parameter completion: callback 格式 x.xxx 单位 MB
+    @objc public func getSize(completion: ((Double) -> Void)?) {
         self.ioQueue.async {
-            let size1 = self.calculateSize(path: self.documentPath)
-            let size2 = self.calculateSize(path: self.userCachePath)
-            let size3 = self.calculateSize(path: self.userTmpPath)
-            let size4 = self.calculateSize(path: self.storagePath)
+            let size1 = self.calculateSize(path: self.userCachePath)
+            let size2 = self.calculateSize(path: self.userTmpPath)
+            let size3 = self.calculateSize(path: self.storagePath)
             DispatchQueue.main.async {
-                closure?((size1 + size2 + size3 + size4) / 1024.0 / 1024.0)
+                completion?((size1 + size2 + size3) / 1024.0 / 1024.0)
+            }
+        }
+    }
+    
+    /// 枚举文件目录
+    ///
+    /// - Parameters:
+    ///   - tmp: 是否tmp目录
+    ///   - completion: callback
+    @objc public func enumeratorForTmp(tmp: Bool, completion: @escaping (Array<String>) -> Void) {
+        let targetPath = tmp ? self.userTmpPath : self.userCachePath
+        var files: [String] = [String]()
+        
+        guard let enumerator = self.fileManager.enumerator(atPath: targetPath) else {
+            completion(files)
+            return
+        }
+        
+        self.ioQueue.async {
+            for fileName in enumerator {
+                if let name = fileName as? String {
+                    let filePath = targetPath.appendingDirectoryPath(path: name)
+                    files.append(filePath)
+                }
+            }
+            
+            DispatchQueue.main.async {
+                completion(files)
             }
         }
     }
@@ -208,9 +231,18 @@ extension MXFileManager {
             self.storageData.append(fileName)
         }
         
+        self.saveRecordData()
+    }
+    
+    //MARK:- 保存数据
+    func saveRecordData() {
         let data = NSKeyedArchiver.archivedData(withRootObject: self.storageData)
-        if let url = URL(string: self.storagePath) {
-            try? data.write(to: url, options: [])
+        let url = URL.init(fileURLWithPath: self.storagePath)
+        do {
+            try data.write(to: url, options: [])
+        }
+        catch let error as NSError {
+            print(error)
         }
     }
     

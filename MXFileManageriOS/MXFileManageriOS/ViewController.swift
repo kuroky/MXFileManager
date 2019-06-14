@@ -13,7 +13,7 @@ import MXFileManager
 class ViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
-    let dataList = ["cache文件夹", "文件", "临时文件夹", "所占文件大小", "清除tmp", "清除cache路径"]
+    let dataList = ["创建cache文件夹", "创建cache文件", "创建tmp文件", "所占文件大小", "清除tmp", "清除cache路径"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,15 +40,22 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let text = dataList[indexPath.row]
-        if text == "cache文件夹" {
+        if text == "创建cache文件夹" {
             MXFileManager.fileManager.createDirectiory(dirName: "1123") { path in
                 if let path = path {
                     print(path)
                 }
             }
         }
-        else if text == "文件" {
+        else if text == "创建cache文件" {
             MXFileManager.fileManager.createFile(name: "456") { path in
+                if let path = path {
+                    print(path)
+                }
+            }
+        }
+        else if text == "创建tmp文件" {
+            MXFileManager.fileManager.createFile(name: "tmp", isTmp: true, shouldStorage: false) { path in
                 if let path = path {
                     print(path)
                 }
