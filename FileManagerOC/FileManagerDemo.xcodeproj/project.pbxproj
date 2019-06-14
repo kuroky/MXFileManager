@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5B22AAD222B348C500FDFD52 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B22AAD122B348C500FDFD52 /* File.swift */; };
 		5B94DA161EFD20B900C0E313 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B94DA151EFD20B900C0E313 /* main.m */; };
 		5B94DA191EFD20B900C0E313 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B94DA181EFD20B900C0E313 /* AppDelegate.m */; };
 		5B94DA1C1EFD20B900C0E313 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B94DA1B1EFD20B900C0E313 /* ViewController.m */; };
@@ -20,7 +19,6 @@
 /* Begin PBXFileReference section */
 		4C43D35401C58CA10C02B1E5 /* Pods-FileManagerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FileManagerDemo.release.xcconfig"; path = "Target Support Files/Pods-FileManagerDemo/Pods-FileManagerDemo.release.xcconfig"; sourceTree = "<group>"; };
 		5B22AAD022B348C500FDFD52 /* FileManagerDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileManagerDemo-Bridging-Header.h"; sourceTree = "<group>"; };
-		5B22AAD122B348C500FDFD52 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		5B94DA111EFD20B900C0E313 /* FileManagerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FileManagerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B94DA151EFD20B900C0E313 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B94DA171EFD20B900C0E313 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -72,7 +70,6 @@
 				5B94DA181EFD20B900C0E313 /* AppDelegate.m */,
 				5B94DA1A1EFD20B900C0E313 /* ViewController.h */,
 				5B94DA1B1EFD20B900C0E313 /* ViewController.m */,
-				5B22AAD122B348C500FDFD52 /* File.swift */,
 				5B94DA2B1EFD20CF00C0E313 /* ViewController.xib */,
 				5B94DA201EFD20B900C0E313 /* Assets.xcassets */,
 				5B94DA221EFD20B900C0E313 /* LaunchScreen.storyboard */,
@@ -184,15 +181,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-FileManagerDemo/Pods-FileManagerDemo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/MXFileManager/MXFileManager.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MXFileManager.framework",
 			);
@@ -231,7 +224,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B94DA1C1EFD20B900C0E313 /* ViewController.m in Sources */,
-				5B22AAD222B348C500FDFD52 /* File.swift in Sources */,
 				5B94DA191EFD20B900C0E313 /* AppDelegate.m in Sources */,
 				5B94DA161EFD20B900C0E313 /* main.m in Sources */,
 			);

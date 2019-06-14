@@ -13,9 +13,10 @@
   },
   "source": {
     "git": "https://github.com/kuroky/MXFileManager.git",
-    "tag": "#{s.version}"
+    "tag": "2.0.0"
   },
-  "swift_version": "5.0",
+  "swift_versions": "5.0",
   "source_files": "MXFileManager/**/*.swift",
-  "requires_arc": true
+  "requires_arc": true,
+  "swift_version": "5.0"
 }

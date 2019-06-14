@@ -15,7 +15,7 @@ import Foundation
 public class MXFileManager: NSObject {
     
     /// cache文件夹路径
-    var userCachePath: String = ""
+    @objc public var userCachePath: String = ""
     /// 临时文件夹路径
     var userTmpPath: String = ""
     /// 记录需要删除的临时文件路径
