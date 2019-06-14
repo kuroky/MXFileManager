@@ -94,7 +94,7 @@ public class MXFileManager: NSObject {
         }
         
         let prePath = isTmp ? self.userTmpPath : self.userCachePath
-        let filePath = prePath + dirName//prePath.appendingDirectoryPath(path: dirName)
+        let filePath = prePath.appendingDirectoryPath(path: dirName)
         
         var state = true
         self.ioQueue.sync {
@@ -168,14 +168,17 @@ public class MXFileManager: NSObject {
     }
     
     /// 获取文件所占大小
+    
+    ///
+    /// - Parameter closure: callback 格式 x.xxx 单位 MB
     @objc public func getSize(closure: ((Double) -> Void)?) {
         self.ioQueue.async {
             let size1 = self.calculateSize(path: self.documentPath)
-            let size2 = self.calculateSize(path: self.documentPath)
-            let size3 = self.calculateSize(path: self.documentPath)
-
+            let size2 = self.calculateSize(path: self.userCachePath)
+            let size3 = self.calculateSize(path: self.userTmpPath)
+            let size4 = self.calculateSize(path: self.storagePath)
             DispatchQueue.main.async {
-                closure?((size1 + size2 + size3) / 1024.0 / 1024.0)
+                closure?((size1 + size2 + size3 + size4) / 1024.0 / 1024.0)
             }
         }
     }
@@ -211,26 +214,19 @@ extension MXFileManager {
         }
     }
     
-    //MARK:- 计算文件大小
+    //MARK:- 计算文件夹大小
     func calculateSize(path: String) -> Double {
-        
+
         var size: Double = 0
-        guard let enumrator = self.fileManager.enumerator(atPath: path) else {
-            return size
-        }
-        
-        for fileName in enumrator {
-            if let name = fileName as? String {
-                let filePath = path.appendingDirectoryPath(path: name)
-                if let attr = try? self.fileManager.attributesOfItem(atPath: filePath) {
-                    size += attr[.size] as! Double
-                }
-            }
+
+        if let attr = try? self.fileManager.attributesOfItem(atPath: path) {
+            size += attr[.size] as! Double
         }
         
         return size
     }
     
+    //MARK:- 清除对应文件
     func clearData(path: String) {
         guard let enumrator = self.fileManager.enumerator(atPath: path) else {
             return
