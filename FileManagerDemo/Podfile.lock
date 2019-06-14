@@ -1,5 +1,5 @@
 PODS:
-  - MXFileManager (1.1.0)
+  - MXFileManager (2.0.0)
 
 DEPENDENCIES:
   - MXFileManager (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  MXFileManager: b617bbba79bf769c5767aa3e2d3d778fe8d70411
+  MXFileManager: 375d344ab21ab8fd68b658cdc85860c31f22507d
 
-PODFILE CHECKSUM: 9d37d426074d1ea0a34b46ab0a73b8b92c59d38a
+PODFILE CHECKSUM: 483f35ea6adb3b4e13a5a7a0a46dd13cec0d74a7
 
 COCOAPODS: 1.6.1

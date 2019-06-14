@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import <MXFileManager/MXFileManager.h>
+#import <MXFileManager-Swift.h>
 
 @interface ViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -51,71 +51,74 @@
     if ([title isEqualToString:@"创建文件夹"]) {
         static BOOL storage = YES;
         NSString *name = [@"cache" stringByAppendingString:[NSUUID UUID].UUIDString];
-        [[MXFileManager sharedManager] mx_createDirectiory:name
-                                               isTemporary:NO
-                                             shouldStorage:storage
-                                                completion:^(NSString *filePath) {
-                                                    NSLog(@"创建文件夹: %@", filePath);
-                                                }];
+        [[MXFileManager fileManager] createDirectioryWithDirName:name
+                                                           isTmp:NO
+                                                   shouldStorage:storage
+                                                      completion:^(NSString *filePath) {
+                                                          NSLog(@"创建文件夹: %@", filePath);
+                                                      }];
         storage = !storage;
     }
     else if ([title isEqualToString:@"创建临时文件夹"]) {
         static BOOL storage = YES;
         NSString *name = [@"tmp" stringByAppendingString:[NSUUID UUID].UUIDString];
-        [[MXFileManager sharedManager] mx_createDirectiory:name
-                                               isTemporary:YES
-                                             shouldStorage:storage
-                                                completion:^(NSString *filePath) {
-                                                    NSLog(@"创建临时文件夹: %@", filePath);
-                                                }];
+        [[MXFileManager fileManager] createDirectioryWithDirName:name
+                                                           isTmp:YES
+                                                   shouldStorage:storage
+                                                      completion:^(NSString *filePath) {
+                                                          NSLog(@"创建临时文件夹: %@", filePath);
+                                                      }];
         storage = !storage;
     }
     else if ([title isEqualToString:@"创建文件"]) {
         static BOOL storage = YES;
         NSString *name = [NSString stringWithFormat:@"cache_%@.txt", [NSUUID UUID].UUIDString];
-        [[MXFileManager sharedManager] mx_createFile:name
-                                         isTemporary:NO
-                                       shouldStorage:storage
-                                          completion:^(NSString *filePath) {
-                                              NSLog(@"创建文件: %@", filePath);
-                                          }];
+        [[MXFileManager fileManager] createFileWithName:name
+                                                  isTmp:NO
+                                          shouldStorage:storage
+                                             completion:^(NSString *filePath) {
+                                                 NSLog(@"创建文件: %@", filePath);
+                                             }];
         storage = !storage;
     }
     else if ([title isEqualToString:@"创建临时文件"]) {
         static BOOL storage = YES;
         NSString *name = [NSString stringWithFormat:@"tmp_%@.txt", [NSUUID UUID].UUIDString];
-        [[MXFileManager sharedManager] mx_createFile:name
-                                         isTemporary:YES
-                                       shouldStorage:storage
-                                          completion:^(NSString *filePath) {
-                                              NSLog(@"创建临时文件: %@", filePath);
-                                          }];
+        [[MXFileManager fileManager] createFileWithName:name
+                                                  isTmp:YES
+                                          shouldStorage:storage
+                                             completion:^(NSString *filePath) {
+                                                 NSLog(@"创建临时文件: %@", filePath);
+                                             }];
         storage = !storage;
     }
     else if ([title isEqualToString:@"自动清除缓存"]) {
-        [[MXFileManager sharedManager] mx_clearTmpCompletion:^() {
+        [[MXFileManager fileManager] clearTmpDataWithCompletion:^{
             NSLog(@"自动清除缓存");
         }];
     }
     else if ([title isEqualToString:@"手动清除缓存"]) {
-        [[MXFileManager sharedManager] mx_clearCacheCompletion:^() {
+        [[MXFileManager fileManager] clearCacheDataWithCompletion:^{
             NSLog(@"手动清除缓存");
         }];
     }
     else if ([title isEqualToString:@"遍历文件tmp"]) {
-        [[MXFileManager sharedManager] mx_enumeratorFromTmp:YES
-                                                 completion:^(NSArray *files) {
-                                                     NSLog(@"files : %@", files);
-                                                 }];
+        
+        [[MXFileManager fileManager] enumeratorForTmpWithTmp:YES
+                                                  completion:^(NSArray<NSString *> *files) {
+                                                      NSLog(@"files : %@", files);
+                                                  }];
     }
     else if ([title isEqualToString:@"遍历文件cache"]) {
-        [[MXFileManager sharedManager] mx_enumeratorFromTmp:NO
-                                                 completion:^(NSArray *files) {
-                                                     NSLog(@"files : %@", files);
-                                                 }];
+        [[MXFileManager fileManager] enumeratorForTmpWithTmp:NO completion:^(NSArray<NSString *> *files) {
+            NSLog(@"files : %@", files);
+        }];
     }
     else if ([title isEqualToString:@"文件大小"]) {
-        NSLog(@"size: %lu", (unsigned long)[MXFileManager sharedManager].mx_getSize);
+        [[MXFileManager fileManager] getSizeWithCompletion:^(double size) {
+            NSLog(@"size: %lu", (unsigned long)size);
+        }];
+        
     }
 }
 

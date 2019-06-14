@@ -1,0 +1,6 @@
+module Pods_MXFileManageriOS {
+  umbrella header "Pods-MXFileManageriOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

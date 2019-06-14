@@ -1,0 +1,6 @@
+module MXFileManager {
+  umbrella header "MXFileManager-umbrella.h"
+
+  export *
+  module * { export * }
+}

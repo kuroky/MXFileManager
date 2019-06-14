@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "ViewController.h"
-#import "MXFileManager.h"
+#import <MXFileManager-Swift.h>
 
 @interface AppDelegate ()
 
@@ -18,7 +18,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [[MXFileManager sharedManager] mx_fileSetup];
+    [[MXFileManager fileManager] fileSetup];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
     self.window.rootViewController = [ViewController new];
