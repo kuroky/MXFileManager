@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '10.0'
 
-  s.source       = { :git => 'https://github.com/kuroky/MXFileManager.git', :tag => '#{s.version}' }
+  s.source       = { :git => 'https://github.com/kuroky/MXFileManager.git', :tag => '2.0.0' }
   s.swift_version = '5.0'
 
   s.source_files  = 'MXFileManager/**/*.swift'
